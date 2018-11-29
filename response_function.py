@@ -1,3 +1,5 @@
+from error_function import numbers_to_error
+
 def read_discrete_inputs(_modbus_data):
     print ('Function name : Read Discrete Inputs')
 
@@ -19,7 +21,7 @@ def read_multiple_holding_registers(_modbus_data):
     print ('Byte count : %d' % byte_count)
     for i in range(int(byte_count/2)):
         print ('Register %d : %d' % (i,int(_modbus_data[i*4+2:i*4+6])))
-	
+    
 def write_single_holding_register(_modbus_data):
     print ('Function name : Write Single Holding Register')
     print ('Register Address : %d' % int(_modbus_data[:4],16))
@@ -89,4 +91,7 @@ def numbers_to_response_functions(argument, modbus_data):
     # Get the function from switcher dictionary
     func = switcher.get(argument)
     # Execute the function
-    func(modbus_data)
+    if func :
+        func(modbus_data)
+    else:
+        numbers_to_error(argument, modbus_data)
