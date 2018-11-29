@@ -5,6 +5,8 @@ import binascii
 from query_function import numbers_to_query_functions
 from response_function import numbers_to_response_functions
 
+packet_count = 0
+
 # use raw socket as a network sniffer
 def sniff_socket():
     conn = socket.socket(socket.AF_INET, socket.SOCK_RAW)
@@ -15,7 +17,7 @@ def sniff_socket():
 
 def modbus_query(_data):
     print ('Transaction ID = %d' % int(_data[:4], 16))
-    print ('Length of Modbus TCP PDU = %d' % (int(_data[8:12],16)-2))
+    print ('Length of Modbus TCP PDU = %d bytes' % (int(_data[8:12],16)-1))
     print ('Unit ID = %d' % int(_data[12:14],16))
 	#function code and data analysis
     numbers_to_query_functions(_data[14:16], _data[16:])
@@ -23,7 +25,7 @@ def modbus_query(_data):
 
 def modbus_response(_data):
     print ('Transaction ID = %d' % int(_data[:4], 16))
-    print ('Length of Modbus TCP PDU = %d' % (int(_data[8:12],16)-2))
+    print ('Length of Modbus TCP PDU = %d bytes' % (int(_data[8:12],16)-1))
     print ('Unit ID = %d' % int(_data[12:14],16))
 	#function code and data analysis
     numbers_to_response_functions(_data[14:16], _data[16:])
@@ -31,14 +33,19 @@ def modbus_response(_data):
 	
 # transform raw data and judge it
 def process_raw_data(_raw_data):
+    global packet_count
     ascii_data = binascii.hexlify(_raw_data).decode('ascii')
 
     if ascii_data[64:68] == '5018':
         if ascii_data[44:48]=='01f6':
             print ('-------------------Modbus Query-------------------')
+            packet_count = packet_count + 1
+            print ('Modbus Packet Count : %d' % packet_count)
             modbus_query(ascii_data[80:])
         elif ascii_data[40:44]=='01f6':
             print ('------------------Modbus Response-----------------')
+            packet_count = packet_count + 1
+            print ('Modbus Packet Count : %d' % packet_count)
             modbus_response(ascii_data[80:])
         else:
             pass
@@ -54,7 +61,6 @@ def process_raw_data(_raw_data):
 # main function
 if __name__ == "__main__":
     sniffer = sniff_socket()
-
     while True:
         raw_data, addr = sniffer.recvfrom(65565)
         process_raw_data(raw_data)
