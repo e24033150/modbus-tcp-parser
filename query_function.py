@@ -15,12 +15,23 @@ def read_input_registers(_modbus_data):
 
 def read_multiple_holding_registers(_modbus_data):
     print ('Function name : Read Multiple Holding Registers')
+    print ('Starting Address : %d' % int(_modbus_data[:4],16))
+    print ('Quantity of Registers : %d' % int(_modbus_data[4:],16))
     
 def write_single_holding_register(_modbus_data):
     print ('Function name : Write Single Holding Register')
+    print ('Register Address : %d' % int(_modbus_data[:4],16))
+    print ('Register Value : %d' % int(_modbus_data[4:],16))
 	
 def write_multiple_holding_registers(_modbus_data):
     print ('Function name : Write Multiple Holding Registers')
+    start_address = int(_modbus_data[:4],16)
+    print ('Starting Address : %d' % start_address)
+    print ('Quantity of Registers : %d' % int(_modbus_data[4:8],16))
+    byte_count = int(_modbus_data[8:10],16)
+    print ('Byte Count : %d' % byte_count)
+    for i in range(int(byte_count/2)):
+        print ('Register %d : %d' % (i+start_address,int(_modbus_data[i*4+10:i*4+14])))
 	
 def read_write_multiple_registers(_modbus_data):
     print ('Function name : Read/Write Multiple Registers')
@@ -53,7 +64,7 @@ def report_slave_id(_modbus_data):
     print ('Function name : Report Slave ID')
 	
 def read_device_identification_or_others(_modbus_data):
-    print ('Function name : Report Read Device Identification or Others')
+    print ('Function name : Read Device Identification or Others')
 	
 switcher = {
 	    '02': read_discrete_inputs,
