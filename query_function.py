@@ -1,12 +1,16 @@
+from error_function import numbers_to_error
+
 def read_discrete_inputs(_modbus_data):
     print ('Function name : Read Discrete Inputs')
 
 def read_coils(_modbus_data):
     print ('Function name : Read Coils')
-
+    print ('Starting Address : %d' % int(_modbus_data[:4],16))
+    print ('Quantity of coils : %d' % int(_modbus_data[4:8],16))
+    
 def write_single_coil(_modbus_data):
     print ('Function name : Write Single Coil')
-
+    
 def write_multiple_coils(_modbus_data):
     print ('Function name : Write Multiple Coils')
 
@@ -32,7 +36,7 @@ def write_multiple_holding_registers(_modbus_data):
     print ('Byte Count : %d' % byte_count)
     for i in range(int(byte_count/2)):
         print ('Register %d : %d' % (i+start_address,int(_modbus_data[i*4+10:i*4+14])))
-	
+
 def read_write_multiple_registers(_modbus_data):
     print ('Function name : Read/Write Multiple Registers')
 
@@ -92,4 +96,7 @@ def numbers_to_query_functions(argument, modbus_data):
     # Get the function from switcher dictionary
     func = switcher.get(argument)
     # Execute the function
-    func(modbus_data)
+    if func:
+        func(modbus_data)
+    else:
+        numbers_to_error(argument, modbus_data)
