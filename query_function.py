@@ -17,6 +17,12 @@ def write_single_coil(_modbus_data):
     
 def write_multiple_coils(_modbus_data):
     print ('Function name : Write Multiple Coils')
+    print ('Starting Address : %d' % int(_modbus_data[:4],16))
+    print ('Quantity of Outputs : %d' % int(_modbus_data[4:8],16))
+    byte_count = int(_modbus_data[8:10],16)
+    print ('Byte Count : %d' % byte_count)
+    for i in range(byte_count):
+        print ('Outputs Value%d : %s' % (i,format(int(_modbus_data[i*2+10:i*2+12],16),'08b')))
 
 def read_input_registers(_modbus_data):
     print ('Function name : Read Input Registers')
@@ -45,34 +51,59 @@ def write_multiple_holding_registers(_modbus_data):
 
 def read_write_multiple_registers(_modbus_data):
     print ('Function name : Read/Write Multiple Registers')
+    print ('Read Starting Address : %d' % int(_modbus_data[:4],16))
+    print ('Quantity to Read : %d' % int(_modbus_data[4:8],16))
+    write_start_address = int(_modbus_data[8:12],16)
+    print ('Write Starting Address : %d' % write_start_address)
+    print ('Quantity to Write : %d' % int(_modbus_data[12:16],16))
+    write_byte_count = int(_modbus_data[16:18],16)
+    print ('Write Byte Count : %d' % write_byte_count)
+    for i in range(int(write_byte_count/2)):
+        print ('Register %d : %d' % (i+write_start_address,int(_modbus_data[i*4+18:i*4+22])))
 
 def mask_write_register(_modbus_data):
     print ('Function name : Mask Write Register')
-
+    print ('Reference Address : %d' % int(_modbus_data[:4],16))
+    print ('And_Mask : %s' % format(int(_modbus_data[4:8],16),'016b'))
+    print ('Or_Mask : %s' % format(int(_modbus_data[8:12],16),'016b'))
+	
 def read_fifo_queue(_modbus_data):
     print ('Function name : Read FIFO Queue')
+    print ('FIFO Pointer Address : %d' % int(_modbus_data[:4],16))
 	
 def read_file_record(_modbus_data):
     print ('Function name : Read File Record')
-		
+    byte_count = int(_modbus_data[:2],16)
+    print ('Byte Count : %d' % byte_count)
+    for i in range(int(byte_count/7)):
+        print ('Sub-Req. %d, Ref. Type : %d' % (i,int(_modbus_data[i*14+2:i*14+4])))
+        print ('Sub-Req. %d, File Number : %d' % (i,int(_modbus_data[i*14+4:i*14+8])))
+        print ('Sub-Req. %d, Record number : %d' % (i,int(_modbus_data[i*14+8:i*14+12])))
+        print ('Sub-Req. %d, Record Length : %d' % (i,int(_modbus_data[i*14+12:i*14+16])))
+
+# Not done		
 def write_file_record(_modbus_data):
     print ('Function name : Write File Record')
 	
 def read_exception_status(_modbus_data):
     print ('Function name : Read Exception Status')
-	
+
+# Not done	
 def diagnostic(_modbus_data):
     print ('Function name : Diagnostic')
-	
+
 def get_com_event_counter(_modbus_data):
     print ('Function name : Get Com Event Counter')
-	
+
+# Not done	
 def get_com_event_log(_modbus_data):
     print ('Function name : Get Com Event Log')
-	
+
+# Not done	
 def report_slave_id(_modbus_data):
     print ('Function name : Report Slave ID')
-	
+
+# Not done	
 def read_device_identification_or_others(_modbus_data):
     print ('Function name : Read Device Identification or Others')
 	
