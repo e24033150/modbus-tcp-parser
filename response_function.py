@@ -2,25 +2,39 @@ from error_function import numbers_to_error
 
 def read_discrete_inputs(_modbus_data):
     print ('Function name : Read Discrete Inputs')
-
+    byte_count = int(_modbus_data[:2],16)
+    print ('Byte count : %d' % byte_count)
+    for i in range(byte_count):
+        print ('Input Status%d : %s' % (i,format((int(_modbus_data[i*2+2:i*2+4]),16),'0>8b')))
+    
 def read_coils(_modbus_data):
     print ('Function name : Read Coils')
+    byte_count = int(_modbus_data[:2],16)
+    print ('Byte count : %d' % byte_count)
+    for i in range(byte_count):
+        print ('Coil Status%d : %s' % (i,format((int(_modbus_data[i*2+2:i*2+4]),16),'0>8b')))
 
 def write_single_coil(_modbus_data):
     print ('Function name : Write Single Coil')
+    print ('Output Address : %d' % int(_modbus_data[:4],16))
+    print ('Output Value : %d' % int(_modbus_data[4:],16))
 
 def write_multiple_coils(_modbus_data):
     print ('Function name : Write Multiple Coils')
 
 def read_input_registers(_modbus_data):
     print ('Function name : Read Input Registers')
+    byte_count = int(_modbus_data[:2],16)
+    print ('Byte count : %d' % byte_count)
+    for i in range(int(byte_count/2)):
+        print ('Input Register value%d : %d' % (i,int(_modbus_data[i*4+2:i*4+6])))
 	
 def read_multiple_holding_registers(_modbus_data):
     print ('Function name : Read Multiple Holding Registers')
     byte_count = int(_modbus_data[:2],16)
     print ('Byte count : %d' % byte_count)
     for i in range(int(byte_count/2)):
-        print ('Register %d : %d' % (i,int(_modbus_data[i*4+2:i*4+6])))
+        print ('Register value%d : %d' % (i,int(_modbus_data[i*4+2:i*4+6])))
     
 def write_single_holding_register(_modbus_data):
     print ('Function name : Write Single Holding Register')
@@ -30,7 +44,7 @@ def write_single_holding_register(_modbus_data):
 def write_multiple_holding_registers(_modbus_data):
     print ('Function name : Write Multiple Holding Registers')
     print ('Starting Address : %s' % int(_modbus_data[:4],16))
-    print ('Quantity of Registers : %s' % int(_modbus_data[4:8],16))
+    print ('Quantity of Registers : %s' % int(_modbus_data[4:],16))
 	
 def read_write_multiple_registers(_modbus_data):
     print ('Function name : Read/Write Multiple Registers')
