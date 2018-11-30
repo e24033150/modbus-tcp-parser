@@ -2,20 +2,26 @@ from error_function import numbers_to_error
 
 def read_discrete_inputs(_modbus_data):
     print ('Function name : Read Discrete Inputs')
-
+    print ('Starting Address : %d' % int(_modbus_data[:4],16))
+    print ('Quantity of Inputs : %d' % int(_modbus_data[4:],16))
+    
 def read_coils(_modbus_data):
     print ('Function name : Read Coils')
     print ('Starting Address : %d' % int(_modbus_data[:4],16))
-    print ('Quantity of coils : %d' % int(_modbus_data[4:8],16))
+    print ('Quantity of coils : %d' % int(_modbus_data[4:],16))
     
 def write_single_coil(_modbus_data):
     print ('Function name : Write Single Coil')
+    print ('Output Address : %d' % int(_modbus_data[:4],16))
+    print ('Output Value : %d' % int(_modbus_data[4:],16))
     
 def write_multiple_coils(_modbus_data):
     print ('Function name : Write Multiple Coils')
 
 def read_input_registers(_modbus_data):
     print ('Function name : Read Input Registers')
+    print ('Starting Address : %d' % int(_modbus_data[:4],16))
+    print ('Quantity of Input Registers : %d' % int(_modbus_data[4:],16))
 
 def read_multiple_holding_registers(_modbus_data):
     print ('Function name : Read Multiple Holding Registers')
