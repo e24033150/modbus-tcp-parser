@@ -1,4 +1,4 @@
-from error_function import numbers_to_error
+from error_module import numbers_to_error
 
 def read_discrete_inputs(_modbus_data):
     print ('Function name : Read Discrete Inputs')
