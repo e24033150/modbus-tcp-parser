@@ -10,13 +10,6 @@ exception_code = {
 		'0b': 'GATEWAY TARGET DEVICE FAILED TO RESPOND' 
 	}
 
-def get_exception_info(_data):
-    info = exception_code.get(_data)
-    if info :
-        print ('Exception : ' + info)
-    else:
-        pass
-	
 switcher = {
 	    '82': 'Read Discrete Inputs',
 		'81': 'Read Coils',
@@ -40,10 +33,10 @@ switcher = {
 	}
 
 def numbers_to_error(argument, modbus_data):
+    # Get function name and exception information
     function_name = switcher.get(argument)
-    # Execute the function
     if function_name :
         print ('Function name : ' + function_name)
-        get_exception_info(modbus_data)
-    else:
-        pass
+        info = exception_code.get(modbus_data)
+        if info :
+            print ('Exception : ' + info)
