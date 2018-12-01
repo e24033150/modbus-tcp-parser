@@ -29,14 +29,14 @@ def read_input_registers(_modbus_data):
     byte_count = int(_modbus_data[:2],16)
     print ('Byte count : %d' % byte_count)
     for i in range(int(byte_count/2)):
-        print ('Input Register value%d : %d' % (i,int(_modbus_data[i*4+2:i*4+6])))
+        print ('Input Register value%d : %d' % (i,int(_modbus_data[i*4+2:i*4+6],16)))
 	
 def read_multiple_holding_registers(_modbus_data):
     print ('Function name : Read Multiple Holding Registers')
     byte_count = int(_modbus_data[:2],16)
     print ('Byte count : %d' % byte_count)
     for i in range(int(byte_count/2)):
-        print ('Register value%d : %d' % (i,int(_modbus_data[i*4+2:i*4+6])))
+        print ('Register value%d : %d' % (i,int(_modbus_data[i*4+2:i*4+6],16)))
     
 def write_single_holding_register(_modbus_data):
     print ('Function name : Write Single Holding Register')
@@ -53,7 +53,7 @@ def read_write_multiple_registers(_modbus_data):
     byte_count = int(_modbus_data[:2],16)
     print ('Byte count : %d' % byte_count)
     for i in range(int(byte_count/2)):
-        print ('Read Registers value%d : %d' % (i,int(_modbus_data[i*4+2:i*4+6])))
+        print ('Read Registers value%d : %d' % (i,int(_modbus_data[i*4+2:i*4+6],16)))
 
 def mask_write_register(_modbus_data):
     print ('Function name : Mask Write Register')
@@ -66,7 +66,7 @@ def read_fifo_queue(_modbus_data):
     print ('Byte count : %d' % int(_modbus_data[:4],16))
     fifo_count = int(_modbus_data[4:8],16)
     for i in range(fifo_count):
-        print ('FIFO Value Register%d : %d' % (i,int(_modbus_data[i*4+8:i*4+12])))
+        print ('FIFO Value Register%d : %d' % (i,int(_modbus_data[i*4+8:i*4+12],16)))
 
 def read_file_record(_modbus_data):
     print ('Function name : Read File Record')
@@ -83,34 +83,56 @@ def read_file_record(_modbus_data):
         current_seq = current_seq + 1
         current_index = current_index + (file_resp_length+1)*2
 
-# Not done
 def write_file_record(_modbus_data):
     print ('Function name : Write File Record')
+    request_data_length = int(_modbus_data[:2],16)
+    print ('Request data length : %d bytes' % request_data_length)
+    
+    current_index = 2
+    current_seq = 1
+    while (current_index < request_data_length*2+2) :
+        print ('Sub-Req. %d, Ref. Type : %s' % (current_seq,_modbus_data[current_index:current_index+2]))
+        print ('Sub-Req. %d, File Number : %d' % (current_seq,int(_modbus_data[current_index+2:current_index+6],16)))
+        print ('Sub-Req. %d, Record number : %d' % (current_seq,int(_modbus_data[current_index+6:current_index+10],16)))
+        record_length = int(_modbus_data[current_index+10:current_index+14],16)
+        for i in range(record_length):
+            print ('Sub-Req. %d, Register.Data : %d' % (current_seq,int(_modbus_data[i*4+current_index+14:i*4+current_index+18],16)))
+        current_seq = current_seq + 1
+        current_index = current_index + (record_length)*4 +14
 	
 def read_exception_status(_modbus_data):
     print ('Function name : Read Exception Status')
     print ('Output Data : %d' % int(_modbus_data,16))
 
-# Not done	
 def diagnostic(_modbus_data):
     print ('Function name : Diagnostic')
+    print ('Sub-function : %s' % _modbus_data[:4])
+    print ('Data : %s' % _modbus_data[4:])
 
 def get_com_event_counter(_modbus_data):
     print ('Function name : Get Com Event Counter')
     print ('Status word : %s' % _modbus_data[:4])
     print ('Event Count %d' % int(_modbus_data[4:],16))
 
-# Not done	
 def get_com_event_log(_modbus_data):
     print ('Function name : Get Com Event Log')
+    byte_count = int(_modbus_data[:2],16)
+    print ('Byte count : %d' % byte_count)
+    print ('Status : %s' % format(int(_modbus_data[2:6],16),'016b'))
+    print ('Event Count : %d' % int(_modbus_data[6:10],16))
+    print ('Message Count : %d' % int(_modbus_data[10:14],16))
+    for i in range(byte_count-6):
+        print ('Event %d : %s' % (i,format(int(_modbus_data[i*2+14:i*2+16],16),'08b')))
 
-# Not done	
 def report_slave_id(_modbus_data):
     print ('Function name : Report Slave ID')
+    print ('Byte Count : %d' % int(_modbus_data[:2],16))
+    #Other contents are device specific
 
-# Not done	
 def read_device_identification_or_others(_modbus_data):
     print ('Function name : Read Device Identification or Others')
+    print ('MEI Type : %s' % _modbus_data[:2])
+    print ('MEI type specific data : %s' % _modbus_data[2:])
 	
 switcher = {
 	    '02': read_discrete_inputs,
